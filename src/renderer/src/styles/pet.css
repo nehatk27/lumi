@@ -1,4 +1,6 @@
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   width: 100%;
   height: 100%;
@@ -6,32 +8,209 @@ html, body, #root {
   overflow: hidden;
 }
 
+body {
+  font-family:
+    'Nunito',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+:root {
+  --lumi-cream: #fffaf3;
+  --lumi-ink: #2d3a3a;
+  --lumi-teal: #247482;
+  --lumi-teal-dark: #1b5d69;
+  --lumi-green: #7bb98c;
+}
+
 .pet {
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
+  padding-bottom: 4px;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
 }
 
+/* Speech bubble */
+.bubble {
+  position: relative;
+  width: 272px;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  background: var(--lumi-cream);
+  color: var(--lumi-ink);
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  animation: lumi-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 18px;
+  height: 18px;
+  background: var(--lumi-cream);
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 0 4px 0;
+}
+.bubble__text {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.btn {
+  flex: 1;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.12s,
+    background-color 0.12s;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:focus-visible {
+  outline: 3px solid var(--lumi-green);
+  outline-offset: 2px;
+}
+.btn--primary {
+  background: var(--lumi-teal);
+  color: #fff;
+}
+.btn--primary:hover {
+  background: var(--lumi-teal-dark);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--lumi-teal);
+  border-color: var(--lumi-teal);
+}
+
+/* Progress */
+.progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.progress__dots {
+  display: flex;
+  gap: 6px;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e6dccf;
+}
+.dot--on {
+  background: #f5b84b;
+  box-shadow: 0 0 6px rgba(245, 184, 75, 0.9);
+}
+.progress__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5a6a6a;
+}
+
+/* Mascot */
 .mascot {
-  -webkit-app-region: drag;           /* lets you drag Lumi around for now */
+  position: relative;
+  -webkit-app-region: drag;
   animation: lumi-float 3.2s ease-in-out infinite;
 }
-
 .mascot__img {
   display: block;
-  width: 220px;
+  width: 190px;
   height: auto;
   user-select: none;
   filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.25));
 }
+.mascot--happy {
+  animation:
+    lumi-hop 0.6s ease-out 1,
+    lumi-float 3.2s ease-in-out 0.6s infinite;
+}
+.mascot--happy::before {
+  /* soft "lumi" glow, no box */
+  content: '';
+  position: absolute;
+  inset: -24px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 214, 120, 0.55), rgba(255, 214, 120, 0) 70%);
+  animation: lumi-glow 1.2s ease-out both;
+}
 
 @keyframes lumi-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes lumi-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lumi-hop {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-18px) scale(1.03);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes lumi-glow {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mascot { animation: none; }
+  .mascot,
+  .mascot--happy,
+  .bubble,
+  .mascot--happy::before {
+    animation: none;
+  }
+  .btn {
+    transition: none;
+  }
 }
