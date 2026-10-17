@@ -1,12 +1,13 @@
 import type { JSX } from 'react'
-import idle from '../assets/lumi-idle.png'
+import idleImg from '../assets/lumi-idle.png'
+import happyImg from '../assets/lumi-happy.png'
 
-export default function Mascot(): JSX.Element {
+export default function Mascot({ happy = false }: { happy?: boolean }): JSX.Element {
   return (
-    <div className="mascot">
+    <div className={happy ? 'mascot mascot--happy' : 'mascot'}>
       <img
         className="mascot__img"
-        src={idle}
+        src={happy ? happyImg : idleImg}
         alt="Lumi, your water reminder companion"
         draggable={false}
       />

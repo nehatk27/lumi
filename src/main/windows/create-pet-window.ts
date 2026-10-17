@@ -3,7 +3,7 @@ import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 
 const WIDTH = 320
-const HEIGHT = 420
+const HEIGHT = 460
 const MARGIN = 16
 
 let petWindow: BrowserWindow | null = null
@@ -44,7 +44,7 @@ export function createPetWindow(): BrowserWindow {
   positionBottomRight(petWindow)
 
   // showInactive: appear without stealing keyboard focus from what the user is typing
-  petWindow.once('ready-to-show', () => petWindow?.showInactive())
+  // petWindow.once('ready-to-show', () => petWindow?.showInactive())
   petWindow.on('closed', () => {
     petWindow = null
   })
@@ -55,4 +55,19 @@ export function createPetWindow(): BrowserWindow {
     petWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
   return petWindow
+}
+
+export function getPetWindow(): BrowserWindow | null {
+  return petWindow && !petWindow.isDestroyed() ? petWindow : null
+}
+
+export function showPetWindow(): void {
+  const win = createPetWindow()
+  positionBottomRight(win)
+  win.setAlwaysOnTop(true, 'floating') // re-assert; some window managers drop it on hide/show
+  if (!win.isVisible()) win.showInactive() // never steal focus
+}
+
+export function hidePetWindow(): void {
+  getPetWindow()?.hide()
 }
