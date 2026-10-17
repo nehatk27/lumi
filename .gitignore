@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist
+out
+*.tsbuildinfo
+
+# Environment / secrets (not used yet, but good habit)
+.env
+.env.*
+*.local
+
+# Logs
+*.log*
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / tooling
+.eslintcache
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
