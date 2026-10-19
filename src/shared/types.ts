@@ -1,4 +1,4 @@
-export type PetPhase = 'hidden' | 'reminding' | 'success'
+export type PetPhase = 'hidden' | 'entering' | 'reminding' | 'success' | 'leaving'
 
 export interface AppStatus {
   phase: PetPhase
@@ -14,6 +14,7 @@ export interface LumiApi {
   snooze(): Promise<void>
   setPaused(paused: boolean): Promise<void>
   onStatusChange(callback: (status: AppStatus) => void): () => void
+  walkFinished(): Promise<void>
 }
 
 export const IPC = {
@@ -21,5 +22,6 @@ export const IPC = {
   confirmWater: 'lumi:confirm-water',
   snooze: 'lumi:snooze',
   setPaused: 'lumi:set-paused',
-  statusChanged: 'lumi:status-changed'
+  statusChanged: 'lumi:status-changed',
+  walkFinished: 'lumi:walk-finished'
 } as const

@@ -26,19 +26,42 @@ body {
   --lumi-green: #7bb98c;
 }
 
+/* ---------- Layout ---------- */
+
+/* The whole window. Children are positioned inside it. */
 .pet {
+  position: relative;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  padding-bottom: 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 14px;
 }
 
-/* Speech bubble */
+/* Holds the speech bubble just above Lumi's head:
+   4px (bottom gap) + 300px (Lumi) + 14px (space) = 318px */
+.bubble-slot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 318px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Lumi's box. LumiActor moves it left/right with a transform. */
+.lumi-actor {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 240px;
+  height: 300px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  visibility: hidden; /* LumiActor shows it once it is positioned */
+  will-change: transform;
+}
+
+/* ---------- Speech bubble ---------- */
+
 .bubble {
   position: relative;
   width: 272px;
@@ -68,7 +91,8 @@ body {
   font-weight: 600;
 }
 
-/* Buttons */
+/* ---------- Buttons ---------- */
+
 .actions {
   display: flex;
   gap: 8px;
@@ -106,7 +130,8 @@ body {
   border-color: var(--lumi-teal);
 }
 
-/* Progress */
+/* ---------- Progress ---------- */
+
 .progress {
   display: flex;
   flex-direction: column;
@@ -133,10 +158,10 @@ body {
   color: #5a6a6a;
 }
 
-/* Mascot */
+/* ---------- 2D Lumi (fallback when 3D is unavailable) ---------- */
+
 .mascot {
   position: relative;
-  -webkit-app-region: drag;
   animation: lumi-float 3.2s ease-in-out infinite;
 }
 .mascot__img {
@@ -162,9 +187,34 @@ body {
   animation: lumi-glow 1.2s ease-out both;
 }
 
+/* ---------- 3D Lumi ---------- */
+
+.mascot3d {
+  position: relative;
+  isolation: isolate;
+  width: 240px;
+  height: 300px;
+}
+.mascot3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.mascot3d--happy::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 214, 120, 0.55), rgba(255, 214, 120, 0) 70%);
+  animation: lumi-glow 1.2s ease-out both;
+}
+
+/* ---------- Animations ---------- */
+
 @keyframes lumi-float {
   0%,
-  100% {
+  100% { 
     transform: translateY(0);
   }
   50% {
@@ -203,11 +253,14 @@ body {
   }
 }
 
+/* ---------- Reduced motion ---------- */
+
 @media (prefers-reduced-motion: reduce) {
   .mascot,
   .mascot--happy,
   .bubble,
-  .mascot--happy::before {
+  .mascot--happy::before,
+  .mascot3d--happy::before {
     animation: none;
   }
   .btn {

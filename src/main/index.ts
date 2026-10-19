@@ -4,6 +4,7 @@ import {
   createPetWindow,
   getPetWindow,
   hidePetWindow,
+  setPetMode,
   showPetWindow
 } from './windows/create-pet-window'
 import { ReminderService } from './services/reminder-service'
@@ -26,8 +27,11 @@ app.whenReady().then(() => {
   })
 
   reminder.on('change', (status: AppStatus) => {
-    // Show first so the entrance animation plays; hide last so the state is delivered.
-    if (status.phase !== 'hidden') showPetWindow()
+    if (status.phase !== 'hidden') {
+      const walking = status.phase === 'entering' || status.phase === 'leaving'
+      setPetMode(walking ? 'strip' : 'card')
+      showPetWindow()
+    }
     getPetWindow()?.webContents.send(IPC.statusChanged, status)
     if (status.phase === 'hidden') hidePetWindow()
   })
@@ -35,6 +39,7 @@ app.whenReady().then(() => {
   registerIpc(reminder)
   createPetWindow() // created hidden, ready for the first reminder
   createTray(reminder)
+  if (is.dev) setTimeout(() => reminder.showNow(), 1500)
   reminder.start()
 })
 

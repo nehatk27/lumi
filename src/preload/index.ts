@@ -10,7 +10,8 @@ const api: LumiApi = {
     const handler = (_event: IpcRendererEvent, status: AppStatus): void => callback(status)
     ipcRenderer.on(IPC.statusChanged, handler)
     return () => ipcRenderer.removeListener(IPC.statusChanged, handler)
-  }
+  },
+  walkFinished: () => ipcRenderer.invoke(IPC.walkFinished)
 }
 
 contextBridge.exposeInMainWorld('lumi', api)
