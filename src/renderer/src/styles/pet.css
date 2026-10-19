@@ -24,6 +24,8 @@ body {
   --lumi-teal: #247482;
   --lumi-teal-dark: #1b5d69;
   --lumi-green: #7bb98c;
+  --lumi-w: 180px;
+  --lumi-h: 225px;
 }
 
 /* ---------- Layout ---------- */
@@ -41,7 +43,7 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 318px;
+  bottom: calc(var(--lumi-h) + 18px);
   display: flex;
   justify-content: center;
 }
@@ -50,9 +52,9 @@ body {
 .lumi-actor {
   position: absolute;
   left: 0;
-  bottom: 4px;
-  width: 240px;
-  height: 300px;
+  bottom: 0;
+  width: var(--lumi-w);
+  height: var(--lumi-h);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -166,7 +168,7 @@ body {
 }
 .mascot__img {
   display: block;
-  width: 190px;
+  width: 142px;
   height: auto;
   user-select: none;
   filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.25));
@@ -192,8 +194,8 @@ body {
 .mascot3d {
   position: relative;
   isolation: isolate;
-  width: 240px;
-  height: 300px;
+  width: var(--lumi-w);
+  height: var(--lumi-h);
 }
 .mascot3d canvas {
   display: block;
@@ -214,7 +216,7 @@ body {
 
 @keyframes lumi-float {
   0%,
-  100% { 
+  100% {
     transform: translateY(0);
   }
   50% {
