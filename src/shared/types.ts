@@ -1,4 +1,4 @@
-export type PetPhase = 'hidden' | 'entering' | 'reminding' | 'success' | 'leaving'
+export type PetPhase = 'hidden' | 'entering' | 'greeting' | 'reminding' | 'success' | 'leaving'
 
 export interface AppStatus {
   phase: PetPhase

@@ -4,7 +4,7 @@ import {
   createPetWindow,
   getPetWindow,
   hidePetWindow,
-  setPetMode,
+  setPetInteractive,
   showPetWindow
 } from './windows/create-pet-window'
 import { ReminderService } from './services/reminder-service'
@@ -28,9 +28,9 @@ app.whenReady().then(() => {
 
   reminder.on('change', (status: AppStatus) => {
     if (status.phase !== 'hidden') {
-      const walking = status.phase === 'entering' || status.phase === 'leaving'
-      setPetMode(walking ? 'strip' : 'card')
       showPetWindow()
+      // Clicks only land on the bubble while she's asking (or celebrating)
+      setPetInteractive(status.phase === 'reminding' || status.phase === 'success')
     }
     getPetWindow()?.webContents.send(IPC.statusChanged, status)
     if (status.phase === 'hidden') hidePetWindow()

@@ -10,6 +10,7 @@ export interface ReminderSettings {
 const TICK_MS = 1000 // cheap clock comparison; also survives sleep/wake correctly
 const SUCCESS_VISIBLE_MS = 2500
 const WALK_FAILSAFE_MS = 30_000 // if the renderer never reports the walk finished
+const GREETING_MS = 2400 // how long Lumi waves before asking
 
 export class ReminderService extends EventEmitter {
   private phase: PetPhase = 'hidden'
@@ -88,12 +89,11 @@ export class ReminderService extends EventEmitter {
     this.beginReminder()
   }
 
-  /** Renderer reports that a walk-in or walk-out animation has finished. */
   walkFinished(): void {
     if (this.phase === 'entering') {
       this.clearTimers()
-      this.phase = 'reminding'
-      this.phaseTimer = setTimeout(() => this.snooze(), this.settings.autoDismissSeconds * 1000)
+      this.phase = 'greeting'
+      this.phaseTimer = setTimeout(() => this.startReminding(), GREETING_MS)
       this.emitChange()
     } else if (this.phase === 'leaving') {
       this.clearTimers()
@@ -113,6 +113,13 @@ export class ReminderService extends EventEmitter {
     this.snoozedUntil = null
     this.phase = 'entering'
     this.walkTimer = setTimeout(() => this.walkFinished(), WALK_FAILSAFE_MS)
+    this.emitChange()
+  }
+
+  private startReminding(): void {
+    this.clearTimers()
+    this.phase = 'reminding'
+    this.phaseTimer = setTimeout(() => this.snooze(), this.settings.autoDismissSeconds * 1000)
     this.emitChange()
   }
 
