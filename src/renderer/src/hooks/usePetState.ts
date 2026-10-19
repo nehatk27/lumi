@@ -16,7 +16,10 @@ export function usePetState(): PetState {
   const lastMessage = useRef<Partial<Record<PetPhase, string>>>({})
 
   const apply = useCallback((next: AppStatus): void => {
-    if (next.phase !== prevPhase.current && next.phase !== 'hidden') {
+    if (
+      next.phase !== prevPhase.current &&
+      (next.phase === 'reminding' || next.phase === 'success')
+    ) {
       const msg = pickMessage(next.phase, lastMessage.current[next.phase])
       lastMessage.current[next.phase] = msg
       setMessage(msg)

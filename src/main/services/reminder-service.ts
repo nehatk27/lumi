@@ -9,6 +9,7 @@ export interface ReminderSettings {
 
 const TICK_MS = 1000 // cheap clock comparison; also survives sleep/wake correctly
 const SUCCESS_VISIBLE_MS = 2500
+const WALK_FAILSAFE_MS = 30_000 // if the renderer never reports the walk finished
 
 export class ReminderService extends EventEmitter {
   private phase: PetPhase = 'hidden'
@@ -17,7 +18,8 @@ export class ReminderService extends EventEmitter {
   private snoozedUntil: number | null = null
   private nextReminderAt: number
   private tickTimer: NodeJS.Timeout | null = null
-  private phaseTimer: NodeJS.Timeout | null = null // success-hide or auto-dismiss
+  private phaseTimer: NodeJS.Timeout | null = null
+  private walkTimer: NodeJS.Timeout | null = null
 
   constructor(private settings: ReminderSettings) {
     super()
@@ -39,7 +41,7 @@ export class ReminderService extends EventEmitter {
   stop(): void {
     if (this.tickTimer) clearInterval(this.tickTimer)
     this.tickTimer = null
-    this.clearPhaseTimer()
+    this.clearTimers()
   }
 
   getStatus(): AppStatus {
@@ -53,63 +55,79 @@ export class ReminderService extends EventEmitter {
   }
 
   confirmWater(): void {
-    if (this.phase !== 'reminding') return // guards double-clicks and stale calls
-    this.clearPhaseTimer()
+    if (this.phase !== 'reminding') return
+    this.clearTimers()
     this.todayCount += 1
     this.snoozedUntil = null
-    this.nextReminderAt = Date.now() + this.intervalMs // confirming resets the interval
+    this.nextReminderAt = Date.now() + this.intervalMs
     this.phase = 'success'
-    this.phaseTimer = setTimeout(() => this.hide(), SUCCESS_VISIBLE_MS)
+    this.phaseTimer = setTimeout(() => this.startLeaving(), SUCCESS_VISIBLE_MS)
     this.emitChange()
   }
 
   snooze(): void {
     if (this.phase !== 'reminding') return
-    this.clearPhaseTimer()
+    this.clearTimers()
     this.snoozedUntil = Date.now() + this.snoozeMs
     this.nextReminderAt = this.snoozedUntil
-    this.phase = 'hidden'
-    this.emitChange()
+    this.startLeaving()
   }
 
   setPaused(paused: boolean): void {
     if (paused === this.paused) return
     this.paused = paused
-    this.clearPhaseTimer()
+    this.clearTimers()
     this.snoozedUntil = null
     this.phase = 'hidden'
     if (!paused) this.nextReminderAt = Date.now() + this.intervalMs
     this.emitChange()
   }
 
-  /** Manual "Show Lumi" from the tray. Does nothing if she's already visible. */
   showNow(): void {
     if (this.phase !== 'hidden') return
     this.beginReminder()
   }
 
+  /** Renderer reports that a walk-in or walk-out animation has finished. */
+  walkFinished(): void {
+    if (this.phase === 'entering') {
+      this.clearTimers()
+      this.phase = 'reminding'
+      this.phaseTimer = setTimeout(() => this.snooze(), this.settings.autoDismissSeconds * 1000)
+      this.emitChange()
+    } else if (this.phase === 'leaving') {
+      this.clearTimers()
+      this.phase = 'hidden'
+      this.emitChange()
+    }
+  }
+
   private tick(): void {
-    if (this.paused || this.phase !== 'hidden') return // no repeats while one is active
+    if (this.paused || this.phase !== 'hidden') return
     if (Date.now() < this.nextReminderAt) return
     this.beginReminder()
   }
 
   private beginReminder(): void {
+    this.clearTimers()
     this.snoozedUntil = null
-    this.phase = 'reminding'
-    this.phaseTimer = setTimeout(() => this.snooze(), this.settings.autoDismissSeconds * 1000)
+    this.phase = 'entering'
+    this.walkTimer = setTimeout(() => this.walkFinished(), WALK_FAILSAFE_MS)
     this.emitChange()
   }
 
-  private hide(): void {
-    this.clearPhaseTimer()
-    this.phase = 'hidden'
+  private startLeaving(): void {
+    this.clearTimers()
+    this.phase = 'leaving'
+    this.walkTimer = setTimeout(() => this.walkFinished(), WALK_FAILSAFE_MS)
     this.emitChange()
   }
 
-  private clearPhaseTimer(): void {
+  private clearTimers(): void {
     if (this.phaseTimer) clearTimeout(this.phaseTimer)
+    if (this.walkTimer) clearTimeout(this.walkTimer)
     this.phaseTimer = null
+    this.walkTimer = null
   }
 
   private emitChange(): void {

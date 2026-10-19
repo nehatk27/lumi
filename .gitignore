@@ -26,3 +26,10 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/launch.json
+
+# Heavy 3D working files (keeping only the optimized model in git)
+resources/lumi/lumi.glb
+resources/lumi/lumi-lite.glb
+resources/lumi/lumi-small.glb
+resources/lumi/lumi-web.glb
+resources/lumi/lumi-rigged.glb

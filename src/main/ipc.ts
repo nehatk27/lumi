@@ -14,4 +14,7 @@ export function registerIpc(reminder: ReminderService): void {
     if (typeof paused !== 'boolean') throw new TypeError('setPaused expects a boolean')
     reminder.setPaused(paused)
   })
+  ipcMain.handle(IPC.walkFinished, () => {
+    reminder.walkFinished()
+  })
 }
