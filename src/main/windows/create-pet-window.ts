@@ -80,15 +80,6 @@ export function createPetWindow(): BrowserWindow {
   return win
 }
 
-// export function showPetWindow(): void {
-//   const win = createPetWindow()
-//   win.setAlwaysOnTop(true, 'floating')
-//   if (!win.isVisible()) {
-//     win.setBounds(stripBounds()) // follows screen or panel changes between reminders
-//     win.showInactive() // never steal focus
-//   }
-// }
-
 function placeStrip(win: BrowserWindow): void {
   win.setBounds(stripBounds())
 }

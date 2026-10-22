@@ -19,10 +19,18 @@ export default function PetWindow(): JSX.Element | null {
       {showBubble && (
         <div className="bubble-slot">
           <SpeechBubble text={message}>
+            <button
+              className="bubble__gear"
+              aria-label="Open Lumi settings"
+              title="Settings"
+              onClick={() => void window.lumi.openSettings()}
+            >
+              ⚙
+            </button>
             {reminding ? (
               <ReminderActions onConfirm={confirm} onSnooze={snooze} />
             ) : (
-              <WaterProgress count={status.todayCount} />
+              <WaterProgress count={status.todayCount} goal={status.dailyGoal} />
             )}
           </SpeechBubble>
         </div>
