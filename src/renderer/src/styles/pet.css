@@ -142,7 +142,10 @@ body {
 }
 .progress__dots {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
+  max-width: 240px;
 }
 .dot {
   width: 12px;
@@ -210,6 +213,31 @@ body {
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 214, 120, 0.55), rgba(255, 214, 120, 0) 70%);
   animation: lumi-glow 1.2s ease-out both;
+}
+
+/* ---------- Settings ---------- */
+
+.bubble__gear {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #8a9a9a;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.bubble__gear:hover {
+  background: #efe7db;
+  color: var(--lumi-ink);
+}
+.bubble__gear:focus-visible {
+  outline: 3px solid var(--lumi-green);
 }
 
 /* ---------- Animations ---------- */

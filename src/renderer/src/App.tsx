@@ -1,6 +1,10 @@
-import { JSX } from 'react/jsx-runtime'
-import PetWindow from './pages/PetWindow'
+import { lazy, Suspense } from 'react'
+import type { JSX } from 'react'
+
+const PetWindow = lazy(() => import('./pages/PetWindow'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 
 export default function App(): JSX.Element {
-  return <PetWindow />
+  const isSettings = window.location.hash === '#/settings'
+  return <Suspense fallback={null}>{isSettings ? <SettingsPage /> : <PetWindow />}</Suspense>
 }
